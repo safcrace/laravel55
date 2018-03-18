@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Profession;
 
 class ProfessionSeeder extends Seeder
 {
@@ -13,7 +14,8 @@ class ProfessionSeeder extends Seeder
     public function run()
     {
         // DB::insert('INSERT INTO professions (name) VALUES (:name)', ['name' => 'Desarrollador Back-end']);
-        DB::table('professions')->insert([
+
+        /* DB::table('professions')->insert([
             'name' => 'Desarrollador Back-end',
         ]);
 
@@ -22,6 +24,16 @@ class ProfessionSeeder extends Seeder
         ]);
 
         DB::table('professions')->insert([
+            'name' => 'Diseñador Web',
+        ]); */
+
+        Profession::create([
+            'name' => 'Desarrollador Back-end',
+        ]);
+        Profession::create([
+            'name' => 'Desarrollador Front-end',
+        ]);
+        Profession::create([
             'name' => 'Diseñador Web',
         ]);
     }
