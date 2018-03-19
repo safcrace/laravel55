@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Profession;
 
 class User extends Authenticatable
 {
@@ -31,9 +32,14 @@ class User extends Authenticatable
         'is_admin' => 'boolean'
     ];
 
+    public function profession()
+    {
+        return $this->belongsTo(Profession::class);
+    }
+
     public function isAdmin()
     {
-        return $this->email === 'safcrace@gmail.com';
+        return $this->is_admin;
     }
 
     public static function findByEmail($email)

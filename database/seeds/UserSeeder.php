@@ -23,7 +23,14 @@ class UserSeeder extends Seeder
             'name' => 'Sender Flores',
             'email' => 'safcrace@gmail.com',
             'password' => bcrypt('laravel'),
-            'profession_id' => Profession::whereName('Desarrollador Back-end')->value('id')
+            'profession_id' => Profession::whereName('Desarrollador Back-end')->value('id'),
+            'is_admin' => true,
         ]);
+
+        factory(User::class)->create([
+            'profession_id' => Profession::whereName('Desarrollador Front-end')->value('id')
+        ]);
+
+        factory(User::class, 48)->create();
     }
 }
