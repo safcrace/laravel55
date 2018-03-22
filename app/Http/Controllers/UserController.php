@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -47,5 +48,37 @@ class UserController extends Controller
         ]);
 
         return redirect('usuarios');
+    }
+
+    public function edit(User $user)
+    {
+        return view('users.edit', ['user' => $user]);
+    }
+
+    public function update(User $user)
+    {
+        if (request()->password != null) {
+            $data = request()->validate([
+                'name' => 'required',
+                'email' => 'required|email',
+                'password' => 'min:7'
+            ]);
+        } else {
+            $data = request()->validate([
+                'name' => 'required',
+                'email' => 'required|email',
+                'password' => ''
+            ]);
+        }
+
+        if ($data['password'] != null) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.show', ['user' => $user]);
     }
 }
