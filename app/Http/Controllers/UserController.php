@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -60,13 +61,14 @@ class UserController extends Controller
         if (request()->password != null) {
             $data = request()->validate([
                 'name' => 'required',
-                'email' => 'required|email',
+                //'email' => 'required|email|unique:users,email,' . $user->id,
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
                 'password' => 'min:7'
             ]);
         } else {
             $data = request()->validate([
                 'name' => 'required',
-                'email' => 'required|email',
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
                 'password' => ''
             ]);
         }
@@ -80,5 +82,12 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()->route('users.show', ['user' => $user]);
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect('usuarios');
     }
 }

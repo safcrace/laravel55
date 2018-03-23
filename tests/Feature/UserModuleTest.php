@@ -278,8 +278,9 @@ class UserModuleTest extends TestCase
     /** @test  */
     public function the_email_must_be_unique_when_updating_the_user()
     {
-        self::markTestIncomplete();
-        return;
+        factory(User::class)->create([
+            'email' => 'existing-email@example.com'
+        ]);
 
         $user = factory(User::class)->create([
             'email' => 'safcrace@gmail.com'
@@ -289,14 +290,14 @@ class UserModuleTest extends TestCase
         $this->from("usuarios/{$user->id}/editar")
             ->put("usuarios/{$user->id}", [
                 'name' => 'Sender Flores',
-                'email' => 'safcrace@gmail.com',
+                'email' => 'existing-email@example.com',
                 'password' => '1234567'
         ])->assertRedirect("usuarios/{$user->id}/editar")
-          ->assertSessionHasErrors(['name']);
+          ->assertSessionHasErrors(['email']);
 
-        $this->assertDatabaseMissing('users', [
+        /* $this->assertDatabaseMissing('users', [
             'email' => 'safcrace@gmail.com'
-        ]);
+        ]); */
     }
 
     /** @test  */
@@ -339,5 +340,42 @@ class UserModuleTest extends TestCase
         $this->assertDatabaseMissing('users', [
             'email' => 'safcrace@gmail.com'
         ]);
+    }
+
+    /** @test  */
+    public function the_users_email_can_stay_the_same_when_updating_the_user()
+    {
+        $user = factory(User::class)->create([
+            'email' => 'safcrace@gmail.com'
+        ]);
+
+        //$this->withoutExceptionHandling();
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("usuarios/{$user->id}", [
+                'name' => 'Sender Flores',
+                'email' => 'safcrace@gmail.com',
+                'password' => '1234567'
+        ])->assertRedirect("usuarios/{$user->id}");
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Sender Flores',
+            'email' => 'safcrace@gmail.com',
+        ]);
+    }
+
+    /** @test  */
+    public function it_deletes_a_user()
+    {
+        $user = factory(User::class)->create();
+
+        $this->withoutExceptionHandling();
+        $this->delete("usuarios/{$user->id}")
+            ->assertRedirect('usuarios');
+
+        $this->assertDatabaseMissing('users', [
+            'id' => $user->id
+        ]);
+
+        //$this->assertSome(0, User::count());
     }
 }
